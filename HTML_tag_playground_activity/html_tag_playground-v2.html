@@ -14,7 +14,6 @@
         body { font-family: 'Inter', sans-serif; }
         code, pre, input.code-input { font-family: 'JetBrains Mono', monospace; }
         
-        /* Ensure input text never hides leading '<' character off-screen */
         input.code-input {
             text-align: center;
             box-sizing: border-box;
@@ -22,21 +21,10 @@
             transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
         }
 
-        /* Custom Scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
 <body class="h-full flex flex-col overflow-hidden select-none">
@@ -57,7 +45,6 @@
             </div>
         </div>
 
-        <!-- Mode Toggle & Controls -->
         <div class="flex items-center space-x-3 text-xs">
             <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800">
                 <button id="part1Btn" onclick="switchPart(1)" class="px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow">Part 1: Basic Tags</button>
@@ -70,19 +57,17 @@
         </div>
     </header>
 
-    <!-- Main Content Split Area -->
+    <!-- Main Split Area -->
     <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
         
         <!-- LEFT PANEL: Interactive Code Editor -->
         <div class="w-full md:w-1/2 flex flex-col border-r border-slate-800 bg-slate-900">
             
-            <!-- File Header Tab & Legend -->
             <div class="h-10 border-b border-slate-800 bg-slate-950/80 px-4 flex items-center justify-between text-xs text-slate-400">
                 <div class="flex items-center space-x-2">
                     <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"></span>
                     <span class="font-mono text-slate-300 font-medium" id="fileTabTitle">index.html (Part 1)</span>
                 </div>
-                <!-- Color Legend -->
                 <div class="flex items-center gap-3 text-[11px]">
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> Pair Complete</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span> One Correct</span>
@@ -90,17 +75,12 @@
                 </div>
             </div>
 
-            <!-- Tag Reference Ribbon -->
             <div class="px-4 py-2 bg-slate-950/40 border-b border-slate-800 flex items-center gap-1.5 text-xs overflow-x-auto shrink-0" id="tagPalette">
-                <!-- Populated dynamically -->
             </div>
 
-            <!-- Dynamic Editor Inputs -->
             <div class="flex-1 overflow-y-auto p-4 font-mono text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-900" id="codeEditor">
-                <!-- Interactive inputs generated dynamically -->
             </div>
 
-            <!-- Instant Syntax Error & Guidance Panel -->
             <div id="diagnosticPanel" class="p-3 border-t border-slate-800 bg-slate-950">
                 <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
                     <span class="font-semibold text-slate-300 flex items-center gap-1.5">
@@ -110,14 +90,13 @@
                     <span id="pairCompletionCount" class="text-[11px] text-slate-400 font-mono">0/0 Pairs Correct</span>
                 </div>
                 <div id="diagnosticMessage" class="text-xs p-2 rounded border bg-slate-900 border-slate-800 text-slate-400">
-                    Type full tags (e.g. <code class="text-amber-400">&lt;h1&gt;</code> and <code class="text-amber-400">&lt;/h1&gt;</code>) to see live pair status.
+                    Type full tags to see live pair status.
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT PANEL: Live Output & Target Comparison -->
+        <!-- RIGHT PANEL: Live Output -->
         <div class="w-full md:w-1/2 flex flex-col bg-slate-950">
-            <!-- View Mode Switcher -->
             <div class="h-10 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between shrink-0">
                 <div class="flex items-center space-x-2">
                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,10 +113,7 @@
                 </div>
             </div>
 
-            <!-- Browser Viewports Container -->
             <div class="flex-1 flex flex-col sm:flex-row overflow-hidden relative" id="previewContainer">
-                
-                <!-- Target Reference Browser Viewport -->
                 <div id="targetWindow" class="flex-1 flex flex-col border-b sm:border-b-0 sm:border-r border-slate-800 bg-white">
                     <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
                         <span class="flex items-center gap-1 text-emerald-700 font-semibold">
@@ -148,7 +124,6 @@
                     <iframe id="targetIframe" class="w-full flex-1 border-none" title="Target Preview"></iframe>
                 </div>
 
-                <!-- Student Live Browser Viewport -->
                 <div id="studentWindow" class="flex-1 flex flex-col bg-white">
                     <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
                         <span class="flex items-center gap-1 text-blue-700 font-semibold">
@@ -158,10 +133,8 @@
                     </div>
                     <iframe id="studentIframe" class="w-full flex-1 border-none" title="Student Preview"></iframe>
                 </div>
-
             </div>
 
-            <!-- Footer Bar -->
             <div class="h-6 border-t border-slate-800 bg-slate-900 px-3 flex items-center justify-between text-[10px] text-slate-500 shrink-0">
                 <span>Rule: Both opening & closing tags must match to turn GREEN</span>
                 <span>Real-Time Syntax Evaluator</span>
@@ -174,16 +147,8 @@
         let currentPart = 1;
         let previewView = 'split';
 
-        // CSS Shared between rendered iFrames
         const sharedCSS = `
-            body {
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                padding: 1.25rem;
-                color: #1e293b;
-                line-height: 1.5;
-                margin: 0;
-                background-color: #ffffff;
-            }
+            body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 1.25rem; color: #1e293b; line-height: 1.5; margin: 0; background-color: #ffffff; }
             h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
             h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.5rem; }
             h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-top: 1rem; margin-bottom: 0.4rem; }
@@ -225,8 +190,6 @@
             </body></html>
         `;
 
-        // Definition of Tag Pairs for Part 1 and Part 2
-        // Each object defines pairId, open input index, close input index (null for single tags), and correct tag strings
         const part1Pairs = [
             { id: 'h1', openIdx: 0, closeIdx: 1, openTag: '<h1>', closeTag: '</h1>', label: '<h1> Title' },
             { id: 'h2', openIdx: 2, closeIdx: 3, openTag: '<h2>', closeTag: '</h2>', label: '<h2> Subtitle' },
@@ -238,7 +201,7 @@
 
         const part2Pairs = [
             { id: 'h1', openIdx: 0, closeIdx: 1, openTag: '<h1>', closeTag: '</h1>', label: '<h1> Title' },
-            { id: 'img', openIdx: 2, closeIdx: null, openTag: '<img src="dog.jpg" alt="Dog">', closeTag: null, label: '<img> Tag', isSingle: true },
+            { id: 'img', openIdx: 2, closeIdx: null, openTag: 'img src', closeTag: null, label: '<img> Tag', isSingle: true },
             { id: 'h2', openIdx: 3, closeIdx: 4, openTag: '<h2>', closeTag: '</h2>', label: '<h2> Subtitle' },
             { id: 'p1', openIdx: 5, closeIdx: 8, openTag: '<p>', closeTag: '</p>', label: '<p> Paragraph 1' },
             { id: 'strong', openIdx: 6, closeIdx: 7, openTag: '<strong>', closeTag: '</strong>', label: '<strong> Tag' },
@@ -313,7 +276,7 @@
                     <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ul&gt; &lt;/ul&gt;</span>
                     <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ol&gt; &lt;/ol&gt;</span>
                     <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;li&gt; &lt;/li&gt;</span>
-                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;img ...&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;img src="..."&gt;</span>
                 `;
 
                 editor.innerHTML = `
@@ -324,10 +287,12 @@
                             ${createInput(1, "</h1>", 8)}
                         </div>
 
-                        <!-- Image tag slot -->
-                        <div class="flex items-center flex-wrap gap-1.5 p-2 rounded bg-slate-950/60 border border-slate-800">
-                            <span class="text-slate-400 text-xs font-semibold">Image Tag:</span>
-                            ${createInput(2, '<img src="dog.jpg" alt="Dog">', 36)}
+                        <!-- Simplified Image Tag Input -->
+                        <div class="flex items-center flex-wrap gap-1 p-2 rounded bg-slate-950/60 border border-slate-800">
+                            <span class="text-slate-400 text-xs font-semibold mr-1">Image Tag:</span>
+                            <span class="text-amber-400 font-bold">&lt;</span>
+                            ${createInput(2, "img src", 10, "img src")}
+                            <span class="text-amber-400 font-bold">="dog.jpg"&gt;</span>
                         </div>
 
                         <div class="flex items-center flex-wrap gap-1.5">
@@ -346,14 +311,12 @@
                             ${createInput(8, "</p>", 7)}
                         </div>
 
-                        <!-- H3 Section -->
                         <div class="flex items-center flex-wrap gap-1.5 pt-1">
                             ${createInput(9, "<h3>", 7)}
                             <span class="text-slate-100 font-semibold">Daily Care Essentials</span>
                             ${createInput(10, "</h3>", 8)}
                         </div>
 
-                        <!-- Unordered List Block -->
                         <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
                             <div class="flex items-center gap-1.5">
                                 ${createInput(11, "<ul>", 7)}
@@ -378,14 +341,12 @@
                             </div>
                         </div>
 
-                        <!-- H3 Training Section -->
                         <div class="flex items-center flex-wrap gap-1.5 pt-1">
                             ${createInput(19, "<h3>", 7)}
                             <span class="text-slate-100 font-semibold">3 Easy Steps to Train a Puppy</span>
                             ${createInput(20, "</h3>", 8)}
                         </div>
 
-                        <!-- Ordered List Block -->
                         <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
                             <div class="flex items-center gap-1.5">
                                 ${createInput(21, "<ol>", 7)}
@@ -418,9 +379,8 @@
             evaluateAllPairs();
         }
 
-        // Generate HTML text input element with dynamic character sizing
-        function createInput(idx, correctTag, maxChars = 10) {
-            const placeholder = correctTag.startsWith('</') ? '</tag>' : (correctTag.startsWith('<img') ? '<img src="..." alt="..."> ' : '<tag>');
+        function createInput(idx, correctTag, maxChars = 10, placeholderText = null) {
+            const placeholder = placeholderText || (correctTag.startsWith('</') ? '</tag>' : '<tag>');
             const widthStyle = `style="width: max(${maxChars + 3}ch, 5rem);"`;
             
             return `
@@ -436,73 +396,61 @@
             `;
         }
 
-        // Main input event handler
         function handleInput(inputEl) {
             if (inputEl) {
-                // Keep input text aligned from start so '<' doesn't slide left
                 inputEl.scrollLeft = 0;
             }
             evaluateAllPairs();
             renderStudentPreview();
         }
 
-        // Checks if an input string is syntactically correct against expected tag
         function checkTagMatch(val, expected) {
             if (!val) return false;
-            const valClean = val.toLowerCase().trim();
+            const valClean = val.toLowerCase().trim().replace(/\s+/g, ' ');
             const expectedClean = expected.toLowerCase().trim();
 
-            if (expectedClean.startsWith('<img')) {
-                // Flexible check for img tag attributes
-                return valClean.startsWith('<img') && valClean.endsWith('>') && valClean.includes('src=') && valClean.includes('alt=');
+            if (expectedClean === 'img src') {
+                return valClean === 'img src' || valClean === '<img src' || valClean.includes('img src');
             }
 
             return valClean === expectedClean;
         }
 
-        // Apply specified style classes to an input element
         function setInputStyle(idx, status) {
             const el = document.querySelector(`input[data-idx="${idx}"]`);
             if (!el) return;
 
-            // Reset base styling
             el.className = "code-input px-2 py-1 text-xs rounded font-mono transition-all focus:outline-none ";
 
             switch(status) {
                 case 'GREEN':
-                    // Both present & correct
                     el.className += "bg-emerald-100 border-2 border-emerald-500 text-emerald-900 font-bold shadow-sm";
                     break;
                 case 'AMBER':
-                    // One correct, partner missing/incorrect
                     el.className += "bg-amber-100 border-2 border-amber-500 text-amber-900 font-semibold";
                     break;
                 case 'RED':
-                    // Filled but incorrect
                     el.className += "bg-rose-100 border-2 border-rose-500 text-rose-900 font-semibold";
                     break;
                 case 'NEUTRAL':
                 default:
-                    // Empty or untouched
                     el.className += "bg-slate-800 border border-slate-700 text-slate-200 focus:border-blue-500";
                     break;
             }
         }
 
-        // Diagnostic analyzer for informative error messaging
         function getSyntaxDiagnostic(val, expected) {
             if (!val) return null;
             const valClean = val.toLowerCase().trim();
             const expectedClean = expected.toLowerCase().trim();
 
-            if (valClean === expectedClean) return null;
-
-            if (expectedClean.startsWith('<img')) {
-                if (!valClean.startsWith('<') || !valClean.endsWith('>')) return "Image tag requires opening '<' and closing '>' brackets.";
-                if (!valClean.includes('src=')) return "Missing 'src=\"...\"' attribute in image tag.";
-                if (!valClean.includes('alt=')) return "Missing 'alt=\"...\"' attribute in image tag.";
-                return "Check image tag syntax: <img src=\"...\" alt=\"...\">";
+            if (expectedClean === 'img src') {
+                if (!valClean.includes('img')) return "Type 'img' for the image element tag name.";
+                if (!valClean.includes('src')) return "Type 'src' after img for the image source attribute.";
+                return "Enter 'img src' inside the box.";
             }
+
+            if (valClean === expectedClean) return null;
 
             const isClosing = expectedClean.startsWith('</');
             const tagWithoutBrackets = expectedClean.replace(/[<>/]/g, '');
@@ -529,7 +477,6 @@
                 const isOpenCorrect = checkTagMatch(openVal, pair.openTag);
                 const isOpenFilled = openVal.length > 0;
 
-                // Handle Single Tags (like <img>)
                 if (pair.isSingle) {
                     if (isOpenCorrect) {
                         setInputStyle(pair.openIdx, 'GREEN');
@@ -544,20 +491,16 @@
                     return;
                 }
 
-                // Handle Paired Tags (opening + closing)
                 const closeEl = document.querySelector(`input[data-idx="${pair.closeIdx}"]`);
                 const closeVal = closeEl ? closeEl.value.trim() : '';
                 const isCloseCorrect = checkTagMatch(closeVal, pair.closeTag);
                 const isCloseFilled = closeVal.length > 0;
 
-                // Color Rule Evaluation Matrix:
-                // Rule 1: BOTH present & correct -> BOTH GREEN
                 if (isOpenCorrect && isCloseCorrect) {
                     setInputStyle(pair.openIdx, 'GREEN');
                     setInputStyle(pair.closeIdx, 'GREEN');
                     correctPairsCount++;
                 }
-                // Rule 2: ONE correct, partner incorrect or missing -> Correct is AMBER, Incorrect is RED, Empty partner stays NEUTRAL or RED if typed
                 else if (isOpenCorrect && !isCloseCorrect) {
                     setInputStyle(pair.openIdx, 'AMBER');
                     setInputStyle(pair.closeIdx, isCloseFilled ? 'RED' : 'NEUTRAL');
@@ -574,7 +517,6 @@
                         if (diag) activeDiagnostics.push({ label: `${pair.label} (Opening)`, msg: diag });
                     }
                 }
-                // Rule 3: BOTH filled and INCORRECT -> BOTH RED
                 else if (isOpenFilled && isCloseFilled && !isOpenCorrect && !isCloseCorrect) {
                     setInputStyle(pair.openIdx, 'RED');
                     setInputStyle(pair.closeIdx, 'RED');
@@ -583,7 +525,6 @@
                     if (diag1) activeDiagnostics.push({ label: `${pair.label} (Opening)`, msg: diag1 });
                     if (diag2) activeDiagnostics.push({ label: `${pair.label} (Closing)`, msg: diag2 });
                 }
-                // Rule 4: One filled incorrect, other empty
                 else {
                     if (isOpenFilled) {
                         setInputStyle(pair.openIdx, 'RED');
@@ -603,7 +544,6 @@
                 }
             });
 
-            // Update Status Counters and Messages
             const countEl = document.getElementById('pairCompletionCount');
             const msgEl = document.getElementById('diagnosticMessage');
 
@@ -617,7 +557,7 @@
                     msgEl.className = "text-xs p-2 rounded border bg-emerald-950/80 border-emerald-500/50 text-emerald-300 font-semibold flex items-center gap-2";
                     msgEl.innerHTML = `
                         <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span>All ${totalPairs} tag pairs are complete and correctly matched! Great job!</span>
+                        <span>All ${totalPairs} tag elements are complete and correctly matched! Great job!</span>
                     `;
                 } else if (activeDiagnostics.length > 0) {
                     const firstErr = activeDiagnostics[0];
@@ -649,8 +589,9 @@
                     </body></html>
                 `;
             } else {
-                let imgVal = getVal(2);
-                if (imgVal.toLowerCase().includes('<img')) {
+                let imgInput = getVal(2).toLowerCase();
+                let imgVal = '';
+                if (imgInput.includes('img') && imgInput.includes('src')) {
                     imgVal = `<img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Happy Beagle Dog">`;
                 }
 
