@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Property Interactive Playground</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f2f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+      color: #1a2b4c;
+    }
+
+    p.subtitle {
+      margin-top: 0;
+      color: #666;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 1100px;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .app-container {
+        flex-direction: row;
+      }
+    }
+
+    /* Control Panel */
+    .control-panel {
+      flex: 1;
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .step-indicator {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #0066cc;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-size: 1.4rem;
+      margin: 0 0 10px 0;
+    }
+
+    .step-description {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background-color: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:hover {
+      border-color: #0066cc;
+      background-color: #eef6ff;
+    }
+
+    .option-btn.selected {
+      border-color: #0066cc;
+      background-color: #0066cc;
+      color: white;
+    }
+
+    /* Free Rein / Suggestions Panel */
+    .suggestions-container {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .suggestion-item {
+      background-color: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .suggestion-item strong {
+      display: block;
+      color: #0066cc;
+      font-family: monospace;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background-color: #e9ecef;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      background-color: #0066cc;
+      color: white;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .nav-btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .nav-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Card Preview Side */
+    .preview-area {
+      flex: 1;
+      background: #e5e5e5;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    /* Target Card styling */
+    #target-card {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #333333;
+      background-color: #ffffff;
+      width: 300px;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+    }
+
+    #target-card, #target-card h2, #target-card p {
+      font-family: inherit;
+    }
+
+    #target-card h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+    }
+
+    /* CSS Display & Line Highlighting */
+    .css-display {
+      width: 100%;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      margin-top: 20px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .css-line {
+      display: block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, border 0.3s ease;
+    }
+
+    /* Highlight class triggered on option selection */
+    .css-line.highlight {
+      background-color: rgba(255, 235, 59, 0.25);
+      outline: 1px solid #ffee58;
+    }
+
+    .css-keyword { color: #569cd6; }
+    .css-prop { color: #9cdcfe; }
+    .css-val { color: #ce9178; }
+
+    /* Interactive CSS Editor for Step 9 */
+    #css-editor {
+      width: 100%;
+      height: 220px;
+      background-color: #1e1e1e;
+      color: #ce9178;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      border: 2px solid #0066cc;
+      resize: vertical;
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CSS Style Explorer</h1>
+  <p class="subtitle">Step through the properties to customize your card!</p>
+
+  <div class="app-container">
+    <div class="control-panel">
+      <div>
+        <div class="step-indicator" id="step-indicator">Step 1 of 9</div>
+        <h2 class="step-title" id="step-title">Font Family</h2>
+        <p class="step-description" id="step-desc">
+          The <code>font-family</code> property sets the typeface of the text.
+        </p>
+
+        <div class="options-grid" id="options-container"></div>
+        <div class="suggestions-container" id="suggestions-container" style="display: none;"></div>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-btn" id="prev-btn">Back</button>
+        <button class="nav-btn" id="next-btn">Next Step</button>
+      </div>
+    </div>
+
+    <div class="preview-area">
+      <div id="target-card">
+        <h2>St Davids Cathedral</h2>
+        <p>St Davids is a small city in Pembrokeshire, Wales. The cathedral was built over 800 years ago and is an important place of worship.</p>
+        <p>Explore basic CSS properties to style this card!</p>
+      </div>
+
+      <!-- Code Display Block for Steps 1 - 8 -->
+      <div class="css-display" id="css-display-block">
+        <span class="css-keyword">#card</span> {<br>
+        <span class="css-line" id="line-font-family">&nbsp;&nbsp;<span class="css-prop">font-family</span>: <span class="css-val" id="code-font-family">Arial, sans-serif</span>;</span>
+        <span class="css-line" id="line-font-size">&nbsp;&nbsp;<span class="css-prop">font-size</span>: <span class="css-val" id="code-font-size">14px</span>;</span>
+        <span class="css-line" id="line-line-height">&nbsp;&nbsp;<span class="css-prop">line-height</span>: <span class="css-val" id="code-line-height">1.4</span>;</span>
+        <span class="css-line" id="line-color">&nbsp;&nbsp;<span class="css-prop">color</span>: <span class="css-val" id="code-color">#333333</span>;</span>
+        <span class="css-line" id="line-background-color">&nbsp;&nbsp;<span class="css-prop">background-color</span>: <span class="css-val" id="code-background-color">#ffffff</span>;</span>
+        <span class="css-line" id="line-width">&nbsp;&nbsp;<span class="css-prop">width</span>: <span class="css-val" id="code-width">300px</span>;</span>
+        <span class="css-line" id="line-margin">&nbsp;&nbsp;<span class="css-prop">margin</span>: <span class="css-val" id="code-margin">20px</span>;</span>
+        <span class="css-line" id="line-padding">&nbsp;&nbsp;<span class="css-prop">padding</span>: <span class="css-val" id="code-padding">20px</span>;</span>
+        }
+      </div>
+
+      <!-- Live Editable Code Box for Step 9 -->
+      <textarea id="css-editor" style="display: none;" spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <script>
+    const steps = [
+      {
+        prop: 'font-family',
+        title: '1. Font Family',
+        desc: 'The font-family property changes the font style of all text inside the card.',
+        options: [
+          { label: 'Arial (Sans-Serif)', val: 'Arial, sans-serif' },
+          { label: 'Comic Sans', val: '"Comic Sans MS", cursive' },
+          { label: 'Georgia (Serif)', val: 'Georgia, serif' },
+          { label: 'Courier (Monospace)', val: '"Courier New", monospace' },
+          { label: 'Trebuchet MS', val: '"Trebuchet MS", sans-serif' }
+        ]
+      },
+      {
+        prop: 'font-size',
+        title: '2. Font Size',
+        desc: 'The font-size property changes how big or small the text appears.',
+        options: [
+          { label: 'Small (12px)', val: '12px' },
+          { label: 'Normal (14px)', val: '14px' },
+          { label: 'Large (18px)', val: '18px' },
+          { label: 'Extra Large (20px)', val: '20px' }
+        ]
+      },
+      {
+        prop: 'line-height',
+        title: '3. Line Height',
+        desc: 'The line-height property controls the vertical spacing between lines of text.',
+        options: [
+          { label: 'Tight (1.0)', val: '1.0' },
+          { label: 'Normal (1.4)', val: '1.4' },
+          { label: 'Spacious (1.8)', val: '1.8' },
+          { label: 'Double (2.2)', val: '2.2' }
+        ]
+      },
+      {
+        prop: 'color',
+        title: '4. Text Color',
+        desc: 'The color property sets the color of the text inside the element.',
+        options: [
+          { label: 'Dark Gray', val: '#333333' },
+          { label: 'Dark Blue', val: '#003366' },
+          { label: 'Dark Green', val: '#004d26' },
+          { label: 'Purple', val: '#4b0082' }
+        ]
+      },
+      {
+        prop: 'background-color',
+        title: '5. Background Color',
+        desc: 'The background-color property changes the color behind the content.',
+        options: [
+          { label: 'White', val: '#ffffff' },
+          { label: 'Pink', val: 'pink' },
+          { label: 'Light Mint', val: '#d1ede4' },
+          { label: 'Whitesmoke', val: 'whitesmoke' },
+          { label: 'Dark Gray', val: '#222222' }
+        ]
+      },
+      {
+        prop: 'width',
+        title: '6. Width',
+        desc: 'The width property sets how wide the element card is.',
+        options: [
+          { label: 'Narrow (220px)', val: '220px' },
+          { label: 'Medium (300px)', val: '300px' },
+          { label: 'Wide (400px)', val: '400px' }
+        ]
+      },
+      {
+        prop: 'margin',
+        title: '7. Margin',
+        desc: 'Margin creates space OUTSIDE around the border of the card.',
+        options: [
+          { label: 'None (0px)', val: '0px' },
+          { label: 'Small (10px)', val: '10px' },
+          { label: 'Medium (30px)', val: '30px' },
+          { label: 'Large (50px)', val: '50px' }
+        ]
+      },
+      {
+        prop: 'padding',
+        title: '8. Padding',
+        desc: 'Padding creates space INSIDE between the text and the border of the card.',
+        options: [
+          { label: 'Tight (5px)', val: '5px' },
+          { label: 'Normal (15px)', val: '15px' },
+          { label: 'Roomy (30px)', val: '30px' },
+          { label: 'Very Roomy (45px)', val: '45px' }
+        ]
+      },
+      {
+        prop: 'free',
+        title: '9. Direct CSS Editor',
+        desc: 'Type your CSS property values directly into the code box on the right! Use the cheatsheet below for ideas.',
+        options: []
+      }
+    ];
+
+    let currentStepIndex = 0;
+    const currentStyles = {
+      'font-family': 'Arial, sans-serif',
+      'font-size': '14px',
+      'line-height': '1.4',
+      'color': '#333333',
+      'background-color': '#ffffff',
+      'width': '300px',
+      'margin': '20px',
+      'padding': '20px'
+    };
+
+    const targetCard = document.getElementById('target-card');
+    const optionsContainer = document.getElementById('options-container');
+    const suggestionsContainer = document.getElementById('suggestions-container');
+    const cssDisplayBlock = document.getElementById('css-display-block');
+    const cssEditor = document.getElementById('css-editor');
+
+    function applyStyle(property, value, triggerHighlight = true) {
+      currentStyles[property] = value;
+      
+      // Auto-adjust text color for readability if background is set to dark gray
+      if (property === 'background-color' && value === '#222222') {
+        if (currentStyles['color'] === '#333333') {
+          applyStyle('color', '#ffffff', false);
+        }
+      }
+
+      targetCard.style[property] = value;
+
+      // Update text in static code view
+      const codeElement = document.getElementById(`code-${property}`);
+      if (codeElement) {
+        codeElement.innerText = value;
+      }
+
+      // Highlight the modified line
+      if (triggerHighlight) {
+        highlightLine(property);
+      }
+    }
+
+    function highlightLine(property) {
+      // Clear previous highlights
+      document.querySelectorAll('.css-line').forEach(line => line.classList.remove('highlight'));
+      
+      const activeLine = document.getElementById(`line-${property}`);
+      if (activeLine) {
+        activeLine.classList.add('highlight');
+      }
+    }
+
+    function renderOptions(step) {
+      optionsContainer.innerHTML = '';
+      step.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        if (currentStyles[step.prop] === opt.val) {
+          btn.classList.add('selected');
+        }
+        btn.innerText = opt.label;
+        btn.onclick = () => {
+          applyStyle(step.prop, opt.val, true);
+          renderOptions(step);
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function renderSuggestions() {
+      suggestionsContainer.innerHTML = '';
+      
+      steps.slice(0, -1).forEach(step => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+
+        const title = document.createElement('strong');
+        title.innerText = `${step.prop}:`;
+        item.appendChild(title);
+
+        const tagList = document.createElement('div');
+        tagList.className = 'tag-list';
+
+        step.options.forEach(opt => {
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.innerText = opt.val;
+          // Clicking a cheatsheet tag inserts that property into the textarea
+          tag.onclick = () => {
+            currentStyles[step.prop] = opt.val;
+            syncStylesToTextarea();
+            applyEditorCSS();
+          };
+          tagList.appendChild(tag);
+        });
+
+        item.appendChild(tagList);
+        suggestionsContainer.appendChild(item);
+      });
+    }
+
+    function syncStylesToTextarea() {
+      let cssString = '#card {\n';
+      for (const [prop, val] of Object.entries(currentStyles)) {
+        cssString += `  ${prop}: ${val};\n`;
+      }
+      cssString += '}';
+      cssEditor.value = cssString;
+    }
+
+    function applyEditorCSS() {
+      const text = cssEditor.value;
+      // Parse CSS key-value pairs using regular expressions
+      const matches = text.matchAll(/([a-z-]+)\s*:\s*([^;]+);/g);
+      
+      for (const match of matches) {
+        const prop = match[1].trim();
+        const val = match[2].trim();
+        if (prop in currentStyles) {
+          currentStyles[prop] = val;
+          targetCard.style[prop] = val;
+        }
+      }
+    }
+
+    function renderStep() {
+      const step = steps[currentStepIndex];
+      
+      document.getElementById('step-indicator').innerText = `Step ${currentStepIndex + 1} of ${steps.length}`;
+      document.getElementById('step-title').innerText = step.title;
+      document.getElementById('step-desc').innerText = step.desc;
+
+      document.getElementById('prev-btn').disabled = (currentStepIndex === 0);
+      document.getElementById('next-btn').disabled = (currentStepIndex === steps.length - 1);
+      document.getElementById('next-btn').innerText = (currentStepIndex === steps.length - 1) ? 'Finished' : 'Next Step';
+
+      if (step.prop === 'free') {
+        optionsContainer.style.display = 'none';
+        suggestionsContainer.style.display = 'block';
+        cssDisplayBlock.style.display = 'none';
+        cssEditor.style.display = 'block';
+
+        renderSuggestions();
+        syncStylesToTextarea();
+      } else {
+        optionsContainer.style.display = 'flex';
+        suggestionsContainer.style.display = 'none';
+        cssDisplayBlock.style.display = 'block';
+        cssEditor.style.display = 'none';
+
+        renderOptions(step);
+        highlightLine(step.prop);
+      }
+    }
+
+    function changeStep(delta) {
+      const newIndex = currentStepIndex + delta;
+      if (newIndex >= 0 && newIndex < steps.length) {
+        currentStepIndex = newIndex;
+        renderStep();
+      }
+    }
+
+    // Attach text area input listener for real-time typing response
+    cssEditor.addEventListener('input', applyEditorCSS);
+
+    // Attach navigation button listeners
+    document.getElementById('prev-btn').onclick = () => changeStep(-1);
+    document.getElementById('next-btn').onclick = () => changeStep(1);
+
+    // Initial run
+    renderStep();
+  </script>
+
+</body>
+</html>
