@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tag Syntax Mastery Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre, input.code-input { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Ensure input text never hides leading '<' character off-screen */
+        input.code-input {
+            text-align: center;
+            box-sizing: border-box;
+            letter-spacing: 0.02em;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden select-none">
+
+    <!-- Navigation & Status Bar -->
+    <header class="h-14 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg border border-blue-500/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-sm font-semibold text-slate-100 flex items-center gap-2">
+                    HTML Syntax Pair Feedback Lab
+                    <span class="text-[11px] font-normal px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Live Pair Matching</span>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Mode Toggle & Controls -->
+        <div class="flex items-center space-x-3 text-xs">
+            <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800">
+                <button id="part1Btn" onclick="switchPart(1)" class="px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow">Part 1: Basic Tags</button>
+                <button id="part2Btn" onclick="switchPart(2)" class="px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all">Part 2: Lists & Image</button>
+            </div>
+
+            <button onclick="resetExercise()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700 font-medium">
+                Reset Activity
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Split Area -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- LEFT PANEL: Interactive Code Editor -->
+        <div class="w-full md:w-1/2 flex flex-col border-r border-slate-800 bg-slate-900">
+            
+            <!-- File Header Tab & Legend -->
+            <div class="h-10 border-b border-slate-800 bg-slate-950/80 px-4 flex items-center justify-between text-xs text-slate-400">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <span class="font-mono text-slate-300 font-medium" id="fileTabTitle">index.html (Part 1)</span>
+                </div>
+                <!-- Color Legend -->
+                <div class="flex items-center gap-3 text-[11px]">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> Pair Complete</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span> One Correct</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-500 inline-block"></span> Incorrect</span>
+                </div>
+            </div>
+
+            <!-- Tag Reference Ribbon -->
+            <div class="px-4 py-2 bg-slate-950/40 border-b border-slate-800 flex items-center gap-1.5 text-xs overflow-x-auto shrink-0" id="tagPalette">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Dynamic Editor Inputs -->
+            <div class="flex-1 overflow-y-auto p-4 font-mono text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-900" id="codeEditor">
+                <!-- Interactive inputs generated dynamically -->
+            </div>
+
+            <!-- Instant Syntax Error & Guidance Panel -->
+            <div id="diagnosticPanel" class="p-3 border-t border-slate-800 bg-slate-950">
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                    <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Instant Syntax Assistant
+                    </span>
+                    <span id="pairCompletionCount" class="text-[11px] text-slate-400 font-mono">0/0 Pairs Correct</span>
+                </div>
+                <div id="diagnosticMessage" class="text-xs p-2 rounded border bg-slate-900 border-slate-800 text-slate-400">
+                    Type full tags (e.g. <code class="text-amber-400">&lt;h1&gt;</code> and <code class="text-amber-400">&lt;/h1&gt;</code>) to see live pair status.
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Live Output & Target Comparison -->
+        <div class="w-full md:w-1/2 flex flex-col bg-slate-950">
+            <!-- View Mode Switcher -->
+            <div class="h-10 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <span class="text-xs font-medium text-slate-300">Live Browser Renderers</span>
+                </div>
+
+                <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[11px]">
+                    <button id="viewSplitBtn" onclick="setPreviewView('split')" class="px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium">Split View</button>
+                    <button id="viewMineBtn" onclick="setPreviewView('mine')" class="px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200">Your Output</button>
+                    <button id="viewTargetBtn" onclick="setPreviewView('target')" class="px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200">Target Output</button>
+                </div>
+            </div>
+
+            <!-- Browser Viewports Container -->
+            <div class="flex-1 flex flex-col sm:flex-row overflow-hidden relative" id="previewContainer">
+                
+                <!-- Target Reference Browser Viewport -->
+                <div id="targetWindow" class="flex-1 flex flex-col border-b sm:border-b-0 sm:border-r border-slate-800 bg-white">
+                    <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
+                        <span class="flex items-center gap-1 text-emerald-700 font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            TARGET PAGE (Goal)
+                        </span>
+                    </div>
+                    <iframe id="targetIframe" class="w-full flex-1 border-none" title="Target Preview"></iframe>
+                </div>
+
+                <!-- Student Live Browser Viewport -->
+                <div id="studentWindow" class="flex-1 flex flex-col bg-white">
+                    <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
+                        <span class="flex items-center gap-1 text-blue-700 font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            YOUR PAGE (Live Output)
+                        </span>
+                    </div>
+                    <iframe id="studentIframe" class="w-full flex-1 border-none" title="Student Preview"></iframe>
+                </div>
+
+            </div>
+
+            <!-- Footer Bar -->
+            <div class="h-6 border-t border-slate-800 bg-slate-900 px-3 flex items-center justify-between text-[10px] text-slate-500 shrink-0">
+                <span>Rule: Both opening & closing tags must match to turn GREEN</span>
+                <span>Real-Time Syntax Evaluator</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let currentPart = 1;
+        let previewView = 'split';
+
+        // CSS Shared between rendered iFrames
+        const sharedCSS = `
+            body {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                padding: 1.25rem;
+                color: #1e293b;
+                line-height: 1.5;
+                margin: 0;
+                background-color: #ffffff;
+            }
+            h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
+            h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+            h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-top: 1rem; margin-bottom: 0.4rem; }
+            p { font-size: 0.95rem; color: #475569; margin-bottom: 0.8rem; }
+            strong { color: #2563eb; font-weight: 700; }
+            em { color: #d97706; font-style: italic; }
+            ul, ol { margin-top: 0.3rem; margin-bottom: 0.8rem; padding-left: 1.4rem; color: #334155; }
+            li { font-size: 0.9rem; margin-bottom: 0.25rem; }
+            img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 0.8rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
+        `;
+
+        const part1TargetHTML = `
+            <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+            <h1>All About Dogs</h1>
+            <h2>Why They Make Great Pets</h2>
+            <p>Dogs are extremely <strong>loyal</strong> companions that bring endless joy to every home.</p>
+            <p>They need regular daily exercise and <em>lots</em> of love to stay healthy and happy.</p>
+            </body></html>
+        `;
+
+        const part2TargetHTML = `
+            <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+            <h1>All About Dogs</h1>
+            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Happy Beagle Dog">
+            <h2>Why They Make Great Pets</h2>
+            <p>Dogs are extremely <strong>loyal</strong> companions that bring endless joy to every home.</p>
+            <h3>Daily Care Essentials</h3>
+            <ul>
+                <li>Daily walks and exercise</li>
+                <li>Fresh water and nutritious food</li>
+                <li>A cozy bed to sleep in</li>
+            </ul>
+            <h3>3 Easy Steps to Train a Puppy</h3>
+            <ol>
+                <li>Be consistent with commands</li>
+                <li>Use positive reward treats</li>
+                <li>Keep training sessions short</li>
+            </ol>
+            </body></html>
+        `;
+
+        // Definition of Tag Pairs for Part 1 and Part 2
+        // Each object defines pairId, open input index, close input index (null for single tags), and correct tag strings
+        const part1Pairs = [
+            { id: 'h1', openIdx: 0, closeIdx: 1, openTag: '<h1>', closeTag: '</h1>', label: '<h1> Title' },
+            { id: 'h2', openIdx: 2, closeIdx: 3, openTag: '<h2>', closeTag: '</h2>', label: '<h2> Subtitle' },
+            { id: 'p1', openIdx: 4, closeIdx: 7, openTag: '<p>', closeTag: '</p>', label: '<p> Paragraph 1' },
+            { id: 'strong', openIdx: 5, closeIdx: 6, openTag: '<strong>', closeTag: '</strong>', label: '<strong> Tag' },
+            { id: 'p2', openIdx: 8, closeIdx: 11, openTag: '<p>', closeTag: '</p>', label: '<p> Paragraph 2' },
+            { id: 'em', openIdx: 9, closeIdx: 10, openTag: '<em>', closeTag: '</em>', label: '<em> Tag' }
+        ];
+
+        const part2Pairs = [
+            { id: 'h1', openIdx: 0, closeIdx: 1, openTag: '<h1>', closeTag: '</h1>', label: '<h1> Title' },
+            { id: 'img', openIdx: 2, closeIdx: null, openTag: '<img src="dog.jpg" alt="Dog">', closeTag: null, label: '<img> Tag', isSingle: true },
+            { id: 'h2', openIdx: 3, closeIdx: 4, openTag: '<h2>', closeTag: '</h2>', label: '<h2> Subtitle' },
+            { id: 'p1', openIdx: 5, closeIdx: 8, openTag: '<p>', closeTag: '</p>', label: '<p> Paragraph 1' },
+            { id: 'strong', openIdx: 6, closeIdx: 7, openTag: '<strong>', closeTag: '</strong>', label: '<strong> Tag' },
+            { id: 'h3_1', openIdx: 9, closeIdx: 10, openTag: '<h3>', closeTag: '</h3>', label: '<h3> Essentials' },
+            { id: 'ul', openIdx: 11, closeIdx: 18, openTag: '<ul>', closeTag: '</ul>', label: '<ul> List' },
+            { id: 'li1', openIdx: 12, closeIdx: 13, openTag: '<li>', closeTag: '</li>', label: '<li> Item 1' },
+            { id: 'li2', openIdx: 14, closeIdx: 15, openTag: '<li>', closeTag: '</li>', label: '<li> Item 2' },
+            { id: 'li3', openIdx: 16, closeIdx: 17, openTag: '<li>', closeTag: '</li>', label: '<li> Item 3' },
+            { id: 'h3_2', openIdx: 19, closeIdx: 20, openTag: '<h3>', closeTag: '</h3>', label: '<h3> Training' },
+            { id: 'ol', openIdx: 21, closeIdx: 28, openTag: '<ol>', closeTag: '</ol>', label: '<ol> List' },
+            { id: 'li4', openIdx: 22, closeIdx: 23, openTag: '<li>', closeTag: '</li>', label: '<li> Item 1' },
+            { id: 'li5', openIdx: 24, closeIdx: 25, openTag: '<li>', closeTag: '</li>', label: '<li> Item 2' },
+            { id: 'li6', openIdx: 26, closeIdx: 27, openTag: '<li>', closeTag: '</li>', label: '<li> Item 3' }
+        ];
+
+        function renderEditor() {
+            const editor = document.getElementById('codeEditor');
+            const palette = document.getElementById('tagPalette');
+            const fileTabTitle = document.getElementById('fileTabTitle');
+
+            if (currentPart === 1) {
+                fileTabTitle.innerText = "index.html (Part 1: Basic Tags)";
+                palette.innerHTML = `
+                    <span class="text-slate-500 text-[11px] uppercase font-semibold shrink-0">Tags Required:</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h1&gt; &lt;/h1&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h2&gt; &lt;/h2&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;p&gt; &lt;/p&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;strong&gt; &lt;/strong&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;em&gt; &lt;/em&gt;</span>
+                `;
+
+                editor.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(0, "<h1>", 7)}
+                            <span class="text-slate-100 font-semibold">All About Dogs</span>
+                            ${createInput(1, "</h1>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(2, "<h2>", 7)}
+                            <span class="text-slate-100 font-semibold">Why They Make Great Pets</span>
+                            ${createInput(3, "</h2>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(4, "<p>", 6)}
+                            <span>Dogs are extremely</span>
+                            ${createInput(5, "<strong>", 11)}
+                            <span class="text-slate-100">loyal</span>
+                            ${createInput(6, "</strong>", 12)}
+                            <span>companions that bring endless joy to every home.</span>
+                            ${createInput(7, "</p>", 7)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(8, "<p>", 6)}
+                            <span>They need regular daily exercise and</span>
+                            ${createInput(9, "<em>", 7)}
+                            <span class="text-slate-100">lots</span>
+                            ${createInput(10, "</em>", 8)}
+                            <span>of love to stay healthy and happy.</span>
+                            ${createInput(11, "</p>", 7)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                fileTabTitle.innerText = "index.html (Part 2: Extension)";
+                palette.innerHTML = `
+                    <span class="text-slate-500 text-[11px] uppercase font-semibold shrink-0">Tags Required:</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h3&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ul&gt; &lt;/ul&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ol&gt; &lt;/ol&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;li&gt; &lt;/li&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;img ...&gt;</span>
+                `;
+
+                editor.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(0, "<h1>", 7)}
+                            <span class="text-slate-100 font-semibold">All About Dogs</span>
+                            ${createInput(1, "</h1>", 8)}
+                        </div>
+
+                        <!-- Image tag slot -->
+                        <div class="flex items-center flex-wrap gap-1.5 p-2 rounded bg-slate-950/60 border border-slate-800">
+                            <span class="text-slate-400 text-xs font-semibold">Image Tag:</span>
+                            ${createInput(2, '<img src="dog.jpg" alt="Dog">', 36)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(3, "<h2>", 7)}
+                            <span class="text-slate-100 font-semibold">Why They Make Great Pets</span>
+                            ${createInput(4, "</h2>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(5, "<p>", 6)}
+                            <span>Dogs are extremely</span>
+                            ${createInput(6, "<strong>", 11)}
+                            <span class="text-slate-100">loyal</span>
+                            ${createInput(7, "</strong>", 12)}
+                            <span>companions...</span>
+                            ${createInput(8, "</p>", 7)}
+                        </div>
+
+                        <!-- H3 Section -->
+                        <div class="flex items-center flex-wrap gap-1.5 pt-1">
+                            ${createInput(9, "<h3>", 7)}
+                            <span class="text-slate-100 font-semibold">Daily Care Essentials</span>
+                            ${createInput(10, "</h3>", 8)}
+                        </div>
+
+                        <!-- Unordered List Block -->
+                        <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(11, "<ul>", 7)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(12, "<li>", 7)}
+                                <span>Daily walks and exercise</span>
+                                ${createInput(13, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(14, "<li>", 7)}
+                                <span>Fresh water and nutritious food</span>
+                                ${createInput(15, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(16, "<li>", 7)}
+                                <span>A cozy bed to sleep in</span>
+                                ${createInput(17, "</li>", 8)}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(18, "</ul>", 8)}
+                            </div>
+                        </div>
+
+                        <!-- H3 Training Section -->
+                        <div class="flex items-center flex-wrap gap-1.5 pt-1">
+                            ${createInput(19, "<h3>", 7)}
+                            <span class="text-slate-100 font-semibold">3 Easy Steps to Train a Puppy</span>
+                            ${createInput(20, "</h3>", 8)}
+                        </div>
+
+                        <!-- Ordered List Block -->
+                        <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(21, "<ol>", 7)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(22, "<li>", 7)}
+                                <span>Be consistent with commands</span>
+                                ${createInput(23, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(24, "<li>", 7)}
+                                <span>Use positive reward treats</span>
+                                ${createInput(25, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(26, "<li>", 7)}
+                                <span>Keep training sessions short</span>
+                                ${createInput(27, "</li>", 8)}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(28, "</ol>", 8)}
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            renderPreviews();
+            evaluateAllPairs();
+        }
+
+        // Generate HTML text input element with dynamic character sizing
+        function createInput(idx, correctTag, maxChars = 10) {
+            const placeholder = correctTag.startsWith('</') ? '</tag>' : (correctTag.startsWith('<img') ? '<img src="..." alt="..."> ' : '<tag>');
+            const widthStyle = `style="width: max(${maxChars + 3}ch, 5rem);"`;
+            
+            return `
+                <input type="text" 
+                       data-idx="${idx}"
+                       data-correct="${correctTag}"
+                       ${widthStyle}
+                       class="code-input px-2 py-1 text-xs rounded bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono" 
+                       placeholder="${placeholder}"
+                       autocomplete="off"
+                       spellcheck="false"
+                       oninput="handleInput(this)" />
+            `;
+        }
+
+        // Main input event handler
+        function handleInput(inputEl) {
+            if (inputEl) {
+                // Keep input text aligned from start so '<' doesn't slide left
+                inputEl.scrollLeft = 0;
+            }
+            evaluateAllPairs();
+            renderStudentPreview();
+        }
+
+        // Checks if an input string is syntactically correct against expected tag
+        function checkTagMatch(val, expected) {
+            if (!val) return false;
+            const valClean = val.toLowerCase().trim();
+            const expectedClean = expected.toLowerCase().trim();
+
+            if (expectedClean.startsWith('<img')) {
+                // Flexible check for img tag attributes
+                return valClean.startsWith('<img') && valClean.endsWith('>') && valClean.includes('src=') && valClean.includes('alt=');
+            }
+
+            return valClean === expectedClean;
+        }
+
+        // Apply specified style classes to an input element
+        function setInputStyle(idx, status) {
+            const el = document.querySelector(`input[data-idx="${idx}"]`);
+            if (!el) return;
+
+            // Reset base styling
+            el.className = "code-input px-2 py-1 text-xs rounded font-mono transition-all focus:outline-none ";
+
+            switch(status) {
+                case 'GREEN':
+                    // Both present & correct
+                    el.className += "bg-emerald-100 border-2 border-emerald-500 text-emerald-900 font-bold shadow-sm";
+                    break;
+                case 'AMBER':
+                    // One correct, partner missing/incorrect
+                    el.className += "bg-amber-100 border-2 border-amber-500 text-amber-900 font-semibold";
+                    break;
+                case 'RED':
+                    // Filled but incorrect
+                    el.className += "bg-rose-100 border-2 border-rose-500 text-rose-900 font-semibold";
+                    break;
+                case 'NEUTRAL':
+                default:
+                    // Empty or untouched
+                    el.className += "bg-slate-800 border border-slate-700 text-slate-200 focus:border-blue-500";
+                    break;
+            }
+        }
+
+        // Diagnostic analyzer for informative error messaging
+        function getSyntaxDiagnostic(val, expected) {
+            if (!val) return null;
+            const valClean = val.toLowerCase().trim();
+            const expectedClean = expected.toLowerCase().trim();
+
+            if (valClean === expectedClean) return null;
+
+            if (expectedClean.startsWith('<img')) {
+                if (!valClean.startsWith('<') || !valClean.endsWith('>')) return "Image tag requires opening '<' and closing '>' brackets.";
+                if (!valClean.includes('src=')) return "Missing 'src=\"...\"' attribute in image tag.";
+                if (!valClean.includes('alt=')) return "Missing 'alt=\"...\"' attribute in image tag.";
+                return "Check image tag syntax: <img src=\"...\" alt=\"...\">";
+            }
+
+            const isClosing = expectedClean.startsWith('</');
+            const tagWithoutBrackets = expectedClean.replace(/[<>/]/g, '');
+
+            if (!valClean.startsWith('<') && !valClean.endsWith('>')) return `Missing brackets! Write '${expectedClean}' with '<' and '>'`;
+            if (!valClean.startsWith('<')) return `Missing opening bracket '<' on '${expectedClean}'`;
+            if (!valClean.endsWith('>')) return `Missing closing bracket '>' on '${expectedClean}'`;
+            if (valClean.endsWith('/>')) return `Do not place slash at end like '${valClean}'. ${isClosing ? `Closing tag is ${expectedClean}` : `Opening tags don't use slashes.`}`;
+            if (isClosing && !valClean.includes('/')) return `Closing tag requires '/' slash: '${expectedClean}'`;
+            if (!isClosing && valClean.includes('/')) return `Opening tags should NOT have a slash '/'. Did you mean '<${tagWithoutBrackets}>'?`;
+
+            return `Check spelling or syntax for '${expectedClean}'`;
+        }
+
+        function evaluateAllPairs() {
+            const pairs = currentPart === 1 ? part1Pairs : part2Pairs;
+            let correctPairsCount = 0;
+            let totalPairs = pairs.length;
+            let activeDiagnostics = [];
+
+            pairs.forEach(pair => {
+                const openEl = document.querySelector(`input[data-idx="${pair.openIdx}"]`);
+                const openVal = openEl ? openEl.value.trim() : '';
+                const isOpenCorrect = checkTagMatch(openVal, pair.openTag);
+                const isOpenFilled = openVal.length > 0;
+
+                // Handle Single Tags (like <img>)
+                if (pair.isSingle) {
+                    if (isOpenCorrect) {
+                        setInputStyle(pair.openIdx, 'GREEN');
+                        correctPairsCount++;
+                    } else if (isOpenFilled) {
+                        setInputStyle(pair.openIdx, 'RED');
+                        const diag = getSyntaxDiagnostic(openVal, pair.openTag);
+                        if (diag) activeDiagnostics.push({ label: pair.label, msg: diag });
+                    } else {
+                        setInputStyle(pair.openIdx, 'NEUTRAL');
+                    }
+                    return;
+                }
+
+                // Handle Paired Tags (opening + closing)
+                const closeEl = document.querySelector(`input[data-idx="${pair.closeIdx}"]`);
+                const closeVal = closeEl ? closeEl.value.trim() : '';
+                const isCloseCorrect = checkTagMatch(closeVal, pair.closeTag);
+                const isCloseFilled = closeVal.length > 0;
+
+                // Color Rule Evaluation Matrix:
+                // Rule 1: BOTH present & correct -> BOTH GREEN
+                if (isOpenCorrect && isCloseCorrect) {
+                    setInputStyle(pair.openIdx, 'GREEN');
+                    setInputStyle(pair.closeIdx, 'GREEN');
+                    correctPairsCount++;
+                }
+                // Rule 2: ONE correct, partner incorrect or missing -> Correct is AMBER, Incorrect is RED, Empty partner stays NEUTRAL or RED if typed
+                else if (isOpenCorrect && !isCloseCorrect) {
+                    setInputStyle(pair.openIdx, 'AMBER');
+                    setInputStyle(pair.closeIdx, isCloseFilled ? 'RED' : 'NEUTRAL');
+                    if (isCloseFilled) {
+                        const diag = getSyntaxDiagnostic(closeVal, pair.closeTag);
+                        if (diag) activeDiagnostics.push({ label: `${pair.label} (Closing)`, msg: diag });
+                    }
+                }
+                else if (!isOpenCorrect && isCloseCorrect) {
+                    setInputStyle(pair.openIdx, isOpenFilled ? 'RED' : 'NEUTRAL');
+                    setInputStyle(pair.closeIdx, 'AMBER');
+                    if (isOpenFilled) {
+                        const diag = getSyntaxDiagnostic(openVal, pair.openTag);
+                        if (diag) activeDiagnostics.push({ label: `${pair.label} (Opening)`, msg: diag });
+                    }
+                }
+                // Rule 3: BOTH filled and INCORRECT -> BOTH RED
+                else if (isOpenFilled && isCloseFilled && !isOpenCorrect && !isCloseCorrect) {
+                    setInputStyle(pair.openIdx, 'RED');
+                    setInputStyle(pair.closeIdx, 'RED');
+                    const diag1 = getSyntaxDiagnostic(openVal, pair.openTag);
+                    const diag2 = getSyntaxDiagnostic(closeVal, pair.closeTag);
+                    if (diag1) activeDiagnostics.push({ label: `${pair.label} (Opening)`, msg: diag1 });
+                    if (diag2) activeDiagnostics.push({ label: `${pair.label} (Closing)`, msg: diag2 });
+                }
+                // Rule 4: One filled incorrect, other empty
+                else {
+                    if (isOpenFilled) {
+                        setInputStyle(pair.openIdx, 'RED');
+                        const diag = getSyntaxDiagnostic(openVal, pair.openTag);
+                        if (diag) activeDiagnostics.push({ label: `${pair.label} (Opening)`, msg: diag });
+                    } else {
+                        setInputStyle(pair.openIdx, 'NEUTRAL');
+                    }
+
+                    if (isCloseFilled) {
+                        setInputStyle(pair.closeIdx, 'RED');
+                        const diag = getSyntaxDiagnostic(closeVal, pair.closeTag);
+                        if (diag) activeDiagnostics.push({ label: `${pair.label} (Closing)`, msg: diag });
+                    } else {
+                        setInputStyle(pair.closeIdx, 'NEUTRAL');
+                    }
+                }
+            });
+
+            // Update Status Counters and Messages
+            const countEl = document.getElementById('pairCompletionCount');
+            const msgEl = document.getElementById('diagnosticMessage');
+
+            if (countEl) {
+                countEl.innerText = `${correctPairsCount}/${totalPairs} Pairs Complete`;
+                countEl.className = correctPairsCount === totalPairs ? "text-[11px] font-bold text-emerald-400 font-mono" : "text-[11px] text-amber-400 font-mono";
+            }
+
+            if (msgEl) {
+                if (correctPairsCount === totalPairs) {
+                    msgEl.className = "text-xs p-2 rounded border bg-emerald-950/80 border-emerald-500/50 text-emerald-300 font-semibold flex items-center gap-2";
+                    msgEl.innerHTML = `
+                        <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>All ${totalPairs} tag pairs are complete and correctly matched! Great job!</span>
+                    `;
+                } else if (activeDiagnostics.length > 0) {
+                    const firstErr = activeDiagnostics[0];
+                    msgEl.className = "text-xs p-2 rounded border bg-rose-950/80 border-rose-500/50 text-rose-300 flex items-center gap-2";
+                    msgEl.innerHTML = `
+                        <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span><strong>${firstErr.label}:</strong> ${firstErr.msg}</span>
+                    `;
+                } else {
+                    msgEl.className = "text-xs p-2 rounded border bg-slate-900 border-slate-800 text-slate-400";
+                    msgEl.innerHTML = `Type tags like <code class="text-amber-400">&lt;tag&gt;</code> and <code class="text-amber-400">&lt;/tag&gt;</code>. Both opening and closing tags turn <span class="text-emerald-400 font-semibold">GREEN</span> when a pair is complete.`;
+                }
+            }
+        }
+
+        function getVal(idx) {
+            const input = document.querySelector(`input[data-idx="${idx}"]`);
+            return input ? input.value.trim() : '';
+        }
+
+        function getStudentHTML() {
+            if (currentPart === 1) {
+                return `
+                    <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+                    ${getVal(0)}All About Dogs${getVal(1)}
+                    ${getVal(2)}Why They Make Great Pets${getVal(3)}
+                    ${getVal(4)}Dogs are extremely ${getVal(5)}loyal${getVal(6)} companions that bring endless joy to every home.${getVal(7)}
+                    ${getVal(8)}They need regular daily exercise and ${getVal(9)}lots${getVal(10)} of love to stay healthy and happy.${getVal(11)}
+                    </body></html>
+                `;
+            } else {
+                let imgVal = getVal(2);
+                if (imgVal.toLowerCase().includes('<img')) {
+                    imgVal = `<img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Happy Beagle Dog">`;
+                }
+
+                return `
+                    <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+                    ${getVal(0)}All About Dogs${getVal(1)}
+                    ${imgVal}
+                    ${getVal(3)}Why They Make Great Pets${getVal(4)}
+                    ${getVal(5)}Dogs are extremely ${getVal(6)}loyal${getVal(7)} companions...${getVal(8)}
+                    
+                    ${getVal(9)}Daily Care Essentials${getVal(10)}
+                    ${getVal(11)}
+                        ${getVal(12)}Daily walks and exercise${getVal(13)}
+                        ${getVal(14)}Fresh water and nutritious food${getVal(15)}
+                        ${getVal(16)}A cozy bed to sleep in${getVal(17)}
+                    ${getVal(18)}
+
+                    ${getVal(19)}3 Easy Steps to Train a Puppy${getVal(20)}
+                    ${getVal(21)}
+                        ${getVal(22)}Be consistent with commands${getVal(23)}
+                        ${getVal(24)}Use positive reward treats${getVal(25)}
+                        ${getVal(26)}Keep training sessions short${getVal(27)}
+                    ${getVal(28)}
+                    </body></html>
+                `;
+            }
+        }
+
+        function renderPreviews() {
+            const targetIframe = document.getElementById('targetIframe');
+            const targetDoc = targetIframe.contentDocument || targetIframe.contentWindow.document;
+            targetDoc.open();
+            targetDoc.write(currentPart === 1 ? part1TargetHTML : part2TargetHTML);
+            targetDoc.close();
+
+            renderStudentPreview();
+        }
+
+        function renderStudentPreview() {
+            const studentIframe = document.getElementById('studentIframe');
+            const studentDoc = studentIframe.contentDocument || studentIframe.contentWindow.document;
+            studentDoc.open();
+            studentDoc.write(getStudentHTML());
+            studentDoc.close();
+        }
+
+        function switchPart(part) {
+            currentPart = part;
+            document.getElementById('part1Btn').className = part === 1 ? "px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow" : "px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
+            document.getElementById('part2Btn').className = part === 2 ? "px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow" : "px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
+            
+            renderEditor();
+        }
+
+        function setPreviewView(view) {
+            previewView = view;
+            const targetWin = document.getElementById('targetWindow');
+            const studentWin = document.getElementById('studentWindow');
+
+            document.getElementById('viewSplitBtn').className = view === 'split' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+            document.getElementById('viewMineBtn').className = view === 'mine' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+            document.getElementById('viewTargetBtn').className = view === 'target' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+
+            if (view === 'split') {
+                targetWin.classList.remove('hidden');
+                studentWin.classList.remove('hidden');
+            } else if (view === 'mine') {
+                targetWin.classList.add('hidden');
+                studentWin.classList.remove('hidden');
+            } else if (view === 'target') {
+                targetWin.classList.remove('hidden');
+                studentWin.classList.add('hidden');
+            }
+        }
+
+        function resetExercise() {
+            renderEditor();
+        }
+
+        window.onload = function() {
+            renderEditor();
+        };
+    </script>
+</body>
+</html>

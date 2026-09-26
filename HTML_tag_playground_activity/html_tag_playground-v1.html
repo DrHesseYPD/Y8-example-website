@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tag Syntax Mastery Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code, pre, input.code-input, select.code-select { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Ensure input text never hides characters off-screen */
+        input.code-input {
+            text-align: center;
+            box-sizing: border-box;
+            letter-spacing: 0.02em;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-hidden select-none">
+
+    <!-- Top Bar Navigation -->
+    <header class="h-14 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="p-1.5 bg-blue-600/20 text-blue-400 rounded-lg border border-blue-500/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-sm font-semibold text-slate-100 flex items-center gap-2">
+                    HTML Tag Syntax Lab
+                    <span class="text-[11px] font-normal px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Full Tag Brackets Mode</span>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Activity Navigation & Controls -->
+        <div class="flex items-center space-x-3 text-xs">
+            <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800">
+                <button id="part1Btn" onclick="switchPart(1)" class="px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow">Part 1: Basic Tags</button>
+                <button id="part2Btn" onclick="switchPart(2)" class="px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all">Part 2: Lists & Image</button>
+            </div>
+
+            <button onclick="checkAnswers()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition flex items-center gap-1.5 shadow-lg shadow-emerald-900/20">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Validate HTML Syntax
+            </button>
+            <button onclick="resetExercise()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition border border-slate-700">
+                Reset
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- LEFT PANEL: Interactive Syntax Editor -->
+        <div class="w-full md:w-1/2 flex flex-col border-r border-slate-800 bg-slate-900">
+            <!-- File Header Tab -->
+            <div class="h-10 border-b border-slate-800 bg-slate-950/60 px-4 flex items-center justify-between text-xs text-slate-400">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                    <span class="font-mono text-slate-300" id="fileTabTitle">index.html (Part 1)</span>
+                </div>
+                <div class="text-[11px] text-amber-400 font-mono">Type FULL tags including &lt; &gt; and /</div>
+            </div>
+
+            <!-- Tags Quick Reference Ribbon -->
+            <div class="px-4 py-2 bg-slate-950/40 border-b border-slate-800/80 flex items-center gap-1.5 text-xs overflow-x-auto" id="tagPalette">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Editor Input Scroll Area -->
+            <div class="flex-1 overflow-y-auto p-4 font-mono text-xs sm:text-sm leading-relaxed text-slate-300 bg-slate-900" id="codeEditor">
+                <!-- Code inputs generated dynamically -->
+            </div>
+
+            <!-- Diagnostic Syntax Feedback Panel -->
+            <div id="feedbackPanel" class="p-3 border-t border-slate-800 bg-slate-950 hidden max-h-52 overflow-y-auto">
+                <div id="feedbackMessage" class="text-xs p-2.5 rounded border"></div>
+                <div id="detailedSyntaxHints" class="mt-2 space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Live Output & Target Comparison -->
+        <div class="w-full md:w-1/2 flex flex-col bg-slate-950">
+            <!-- View Controls Header -->
+            <div class="h-10 border-b border-slate-800 bg-slate-900 px-4 flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <span class="text-xs font-medium text-slate-300">Live Browser Viewports</span>
+                </div>
+
+                <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-[11px]">
+                    <button id="viewSplitBtn" onclick="setPreviewView('split')" class="px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium">Split Target & Mine</button>
+                    <button id="viewMineBtn" onclick="setPreviewView('mine')" class="px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200">My Output Only</button>
+                    <button id="viewTargetBtn" onclick="setPreviewView('target')" class="px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200">Target Output Only</button>
+                </div>
+            </div>
+
+            <!-- Viewports Container -->
+            <div class="flex-1 flex flex-col sm:flex-row overflow-hidden relative" id="previewContainer">
+                
+                <!-- Target Reference Viewport -->
+                <div id="targetWindow" class="flex-1 flex flex-col border-b sm:border-b-0 sm:border-r border-slate-800 bg-white">
+                    <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
+                        <span class="flex items-center gap-1 text-emerald-700 font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            TARGET VIEW (Target Result)
+                        </span>
+                    </div>
+                    <iframe id="targetIframe" class="w-full flex-1 border-none" title="Target Preview"></iframe>
+                </div>
+
+                <!-- Student Live Output Viewport -->
+                <div id="studentWindow" class="flex-1 flex flex-col bg-white">
+                    <div class="h-7 border-b border-slate-200 bg-slate-100 px-3 flex items-center justify-between text-[11px] text-slate-600 font-medium shrink-0">
+                        <span class="flex items-center gap-1 text-blue-700 font-semibold">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            YOUR OUTPUT (Live Render)
+                        </span>
+                    </div>
+                    <iframe id="studentIframe" class="w-full flex-1 border-none" title="Student Preview"></iframe>
+                </div>
+
+            </div>
+
+            <!-- Status Footer -->
+            <div class="h-6 border-t border-slate-800 bg-slate-900 px-3 flex items-center justify-between text-[10px] text-slate-500 shrink-0">
+                <span>Syntax must be exact: opening &lt;tag&gt; and closing &lt;/tag&gt;</span>
+                <span>Real-Time Parser Active</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Logic & Syntax Error Diagnostics -->
+    <script>
+        let currentPart = 1;
+        let previewView = 'split';
+
+        const sharedCSS = `
+            body {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                padding: 1.25rem;
+                color: #1e293b;
+                line-height: 1.5;
+                margin: 0;
+                background-color: #ffffff;
+            }
+            h1 { font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.4rem; }
+            h2 { font-size: 1.35rem; font-weight: 700; color: #1e293b; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+            h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-top: 1rem; margin-bottom: 0.4rem; }
+            p { font-size: 0.95rem; color: #475569; margin-bottom: 0.8rem; }
+            strong { color: #2563eb; font-weight: 700; }
+            em { color: #d97706; font-style: italic; }
+            ul, ol { margin-top: 0.3rem; margin-bottom: 0.8rem; padding-left: 1.4rem; color: #334155; }
+            li { font-size: 0.9rem; margin-bottom: 0.25rem; }
+            img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 0.8rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
+        `;
+
+        const part1TargetHTML = `
+            <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+            <h1>All About Dogs</h1>
+            <h2>Why They Make Great Pets</h2>
+            <p>Dogs are extremely <strong>loyal</strong> companions that bring endless joy to every home.</p>
+            <p>They need regular daily exercise and <em>lots</em> of love to stay healthy and happy.</p>
+            </body></html>
+        `;
+
+        const part2TargetHTML = `
+            <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+            <h1>All About Dogs</h1>
+            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Happy Beagle Dog">
+            <h2>Why They Make Great Pets</h2>
+            <p>Dogs are extremely <strong>loyal</strong> companions that bring endless joy to every home.</p>
+            <h3>Daily Care Essentials</h3>
+            <ul>
+                <li>Daily walks and exercise</li>
+                <li>Fresh water and nutritious food</li>
+                <li>A cozy bed to sleep in</li>
+            </ul>
+            <h3>3 Easy Steps to Train a Puppy</h3>
+            <ol>
+                <li>Be consistent with commands</li>
+                <li>Use positive reward treats</li>
+                <li>Keep training sessions short</li>
+            </ol>
+            </body></html>
+        `;
+
+        // Render editor slots
+        function renderEditor() {
+            const editor = document.getElementById('codeEditor');
+            const palette = document.getElementById('tagPalette');
+            const fileTabTitle = document.getElementById('fileTabTitle');
+
+            if (currentPart === 1) {
+                fileTabTitle.innerText = "index.html (Part 1: Basic Tags)";
+                palette.innerHTML = `
+                    <span class="text-slate-500 text-[11px] uppercase font-semibold">Part 1 Target Tags:</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h1&gt; &lt;/h1&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h2&gt; &lt;/h2&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;p&gt; &lt;/p&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;strong&gt; &lt;/strong&gt;</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;em&gt; &lt;/em&gt;</span>
+                `;
+
+                editor.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(0, "<h1>", 7)}
+                            <span class="text-amber-200 font-semibold">All About Dogs</span>
+                            ${createInput(1, "</h1>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(2, "<h2>", 7)}
+                            <span class="text-amber-200 font-semibold">Why They Make Great Pets</span>
+                            ${createInput(3, "</h2>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(4, "<p>", 6)}
+                            <span>Dogs are extremely</span>
+                            ${createInput(5, "<strong>", 11)}
+                            <span class="text-amber-200">loyal</span>
+                            ${createInput(6, "</strong>", 12)}
+                            <span>companions that bring endless joy to every home.</span>
+                            ${createInput(7, "</p>", 7)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(8, "<p>", 6)}
+                            <span>They need regular daily exercise and</span>
+                            ${createInput(9, "<em>", 7)}
+                            <span class="text-amber-200">lots</span>
+                            ${createInput(10, "</em>", 8)}
+                            <span>of love to stay healthy and happy.</span>
+                            ${createInput(11, "</p>", 7)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                fileTabTitle.innerText = "index.html (Part 2: Extension)";
+                palette.innerHTML = `
+                    <span class="text-slate-500 text-[11px] uppercase font-semibold">Part 2 Target Tags:</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;h3&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ul&gt; &lt;/ul&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;ol&gt; &lt;/ol&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;li&gt; &lt;/li&gt;</span>
+                    <span class="px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 text-blue-400 font-mono text-[11px]">&lt;img ...&gt;</span>
+                `;
+
+                editor.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(0, "<h1>", 7)}
+                            <span class="text-amber-200 font-semibold">All About Dogs</span>
+                            ${createInput(1, "</h1>", 8)}
+                        </div>
+
+                        <!-- Image tag slot -->
+                        <div class="flex items-center flex-wrap gap-1.5 p-2 rounded bg-slate-950/60 border border-slate-800">
+                            <span class="text-slate-400 text-xs font-semibold">Image Tag:</span>
+                            ${createInput(2, '<img src="dog.jpg" alt="Dog">', 36)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(3, "<h2>", 7)}
+                            <span class="text-amber-200 font-semibold">Why They Make Great Pets</span>
+                            ${createInput(4, "</h2>", 8)}
+                        </div>
+
+                        <div class="flex items-center flex-wrap gap-1.5">
+                            ${createInput(5, "<p>", 6)}
+                            <span>Dogs are extremely</span>
+                            ${createInput(6, "<strong>", 11)}
+                            <span class="text-amber-200">loyal</span>
+                            ${createInput(7, "</strong>", 12)}
+                            <span>companions...</span>
+                            ${createInput(8, "</p>", 7)}
+                        </div>
+
+                        <!-- H3 Section -->
+                        <div class="flex items-center flex-wrap gap-1.5 pt-1">
+                            ${createInput(9, "<h3>", 7)}
+                            <span class="text-amber-200 font-semibold">Daily Care Essentials</span>
+                            ${createInput(10, "</h3>", 8)}
+                        </div>
+
+                        <!-- Unordered List Block -->
+                        <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(11, "<ul>", 7)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(12, "<li>", 7)}
+                                <span>Daily walks and exercise</span>
+                                ${createInput(13, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(14, "<li>", 7)}
+                                <span>Fresh water and nutritious food</span>
+                                ${createInput(15, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(16, "<li>", 7)}
+                                <span>A cozy bed to sleep in</span>
+                                ${createInput(17, "</li>", 8)}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(18, "</ul>", 8)}
+                            </div>
+                        </div>
+
+                        <!-- H3 Training Section -->
+                        <div class="flex items-center flex-wrap gap-1.5 pt-1">
+                            ${createInput(19, "<h3>", 7)}
+                            <span class="text-amber-200 font-semibold">3 Easy Steps to Train a Puppy</span>
+                            ${createInput(20, "</h3>", 8)}
+                        </div>
+
+                        <!-- Ordered List Block -->
+                        <div class="pl-3 border-l-2 border-slate-800 space-y-1.5">
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(21, "<ol>", 7)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(22, "<li>", 7)}
+                                <span>Be consistent with commands</span>
+                                ${createInput(23, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(24, "<li>", 7)}
+                                <span>Use positive reward treats</span>
+                                ${createInput(25, "</li>", 8)}
+                            </div>
+                            <div class="pl-3 flex items-center gap-1.5">
+                                ${createInput(26, "<li>", 7)}
+                                <span>Keep training sessions short</span>
+                                ${createInput(27, "</li>", 8)}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                ${createInput(28, "</ol>", 8)}
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            }
+
+            renderPreviews();
+        }
+
+        function createInput(idx, correctTag, maxChars = 10, actualCorrect = null) {
+            const expected = actualCorrect || correctTag;
+            const placeholder = expected.startsWith('</') ? '</tag>' : (expected.startsWith('<img') ? '<img src="..." alt="..."> ' : '<tag>');
+            // Dynamic width in ch units to prevent inner scrolling & hiding leading character '<'
+            const widthStyle = `style="width: max(${maxChars + 3}ch, 5rem);"`;
+            
+            return `
+                <input type="text" 
+                       data-idx="${idx}"
+                       data-correct="${expected}"
+                       ${widthStyle}
+                       class="code-input px-2 py-1 text-xs rounded bg-slate-800 border border-slate-700 text-blue-300 focus:outline-none focus:border-blue-500 font-mono transition-colors" 
+                       placeholder="${placeholder}"
+                       autocomplete="off"
+                       spellcheck="false"
+                       oninput="onInputChanged(this)" />
+            `;
+        }
+
+        function onInputChanged(inputEl) {
+            // Ensure scroll position remains at start so '<' is never pushed out of sight
+            if (inputEl) {
+                inputEl.scrollLeft = 0;
+            }
+            renderStudentPreview();
+        }
+
+        function getVal(idx) {
+            const input = document.querySelector(`input[data-idx="${idx}"]`);
+            return input ? input.value.trim() : '';
+        }
+
+        function getStudentHTML() {
+            if (currentPart === 1) {
+                const t0 = getVal(0); const t1 = getVal(1);
+                const t2 = getVal(2); const t3 = getVal(3);
+                const t4 = getVal(4); const t5 = getVal(5); const t6 = getVal(6); const t7 = getVal(7);
+                const t8 = getVal(8); const t9 = getVal(9); const t10 = getVal(10); const t11 = getVal(11);
+
+                return `
+                    <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+                    ${t0}All About Dogs${t1}
+                    ${t2}Why They Make Great Pets${t3}
+                    ${t4}Dogs are extremely ${t5}loyal${t6} companions that bring endless joy to every home.${t7}
+                    ${t8}They need regular daily exercise and ${t9}lots${t10} of love to stay healthy and happy.${t11}
+                    </body></html>
+                `;
+            } else {
+                const t0 = getVal(0); const t1 = getVal(1);
+                let t2 = getVal(2);
+                const t3 = getVal(3); const t4 = getVal(4);
+                const t5 = getVal(5); const t6 = getVal(6); const t7 = getVal(7); const t8 = getVal(8);
+                const t9 = getVal(9); const t10 = getVal(10);
+                const t11 = getVal(11);
+                const t12 = getVal(12); const t13 = getVal(13);
+                const t14 = getVal(14); const t15 = getVal(15);
+                const t16 = getVal(16); const t17 = getVal(17);
+                const t18 = getVal(18);
+
+                const t19 = getVal(19); const t20 = getVal(20);
+                const t21 = getVal(21);
+                const t22 = getVal(22); const t23 = getVal(23);
+                const t24 = getVal(24); const t25 = getVal(25);
+                const t26 = getVal(26); const t27 = getVal(27);
+                const t28 = getVal(28);
+
+                // Handle image source injection if valid image tag
+                if (t2.toLowerCase().includes('<img')) {
+                    t2 = `<img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Happy Beagle Dog">`;
+                }
+
+                return `
+                    <!DOCTYPE html><html><head><style>${sharedCSS}</style></head><body>
+                    ${t0}All About Dogs${t1}
+                    ${t2}
+                    ${t3}Why They Make Great Pets${t4}
+                    ${t5}Dogs are extremely ${t6}loyal${t7} companions...${t8}
+                    
+                    ${t9}Daily Care Essentials${t10}
+                    ${t11}
+                        ${t12}Daily walks and exercise${t13}
+                        ${t14}Fresh water and nutritious food${t15}
+                        ${t16}A cozy bed to sleep in${t17}
+                    ${t18}
+
+                    ${t19}3 Easy Steps to Train a Puppy${t20}
+                    ${t21}
+                        ${t22}Be consistent with commands${t23}
+                        ${t24}Use positive reward treats${t25}
+                        ${t26}Keep training sessions short${t27}
+                    ${t28}
+                    </body></html>
+                `;
+            }
+        }
+
+        function diagnoseError(val, expected) {
+            if (!val) return "Field is empty. Type a full HTML tag.";
+
+            const valClean = val.toLowerCase().trim();
+            const expectedClean = expected.toLowerCase().trim();
+
+            if (valClean === expectedClean) return null;
+
+            // Check image tag specifically
+            if (expectedClean.startsWith('<img')) {
+                if (!valClean.startsWith('<') || !valClean.endsWith('>')) {
+                    return "Image tag must start with '<' and end with '>' (e.g., <img src=\"...\" alt=\"...\">)";
+                }
+                if (!valClean.includes('src=')) {
+                    return "Image tag is missing the 'src' attribute. Example: <img src=\"dog.jpg\" alt=\"dog\">";
+                }
+                if (!valClean.includes('alt=')) {
+                    return "Don't forget the 'alt' descriptive attribute in your image tag!";
+                }
+                return "Check your image tag syntax. Example format: <img src=\"dog.jpg\" alt=\"Dog\">";
+            }
+
+            const isClosing = expectedClean.startsWith('</');
+            const expectedTagName = expectedClean.replace(/[<>/]/g, '').trim();
+
+            // Check missing brackets
+            if (!valClean.startsWith('<') && !valClean.endsWith('>')) {
+                return `Missing both angle brackets '<' and '>'. Did you mean '${expectedClean}'?`;
+            }
+            if (!valClean.startsWith('<')) {
+                return `Missing opening angle bracket '<'. Example: '${expectedClean}'`;
+            }
+            if (!valClean.endsWith('>')) {
+                return `Missing closing angle bracket '>'. Example: '${expectedClean}'`;
+            }
+
+            // Check trailing slash errors like <p/> or <h1/>
+            if (valClean.endsWith('/>')) {
+                return `Do not place the slash at the end like '${valClean}'. ${isClosing ? `Closing tags start with </ like '${expectedClean}'` : `Opening tags do not use slashes.`}`;
+            }
+
+            // Check spaces in closing slash like < /p>
+            if (valClean.includes('< /') || valClean.includes('</ ')) {
+                return `Remove spaces around the slash in closing tag. Example: '${expectedClean}'`;
+            }
+
+            // Check missing slash in closing tag
+            if (isClosing && !valClean.includes('/')) {
+                return `Closing tags require a forward slash '/' directly after '<'. Example: '${expectedClean}'`;
+            }
+
+            // Check slash in opening tag
+            if (!isClosing && valClean.includes('/')) {
+                return `Opening tags should NOT have a slash '/'. Did you mean '<${expectedTagName}>'?`;
+            }
+
+            // Check misspelled tag name
+            const enteredTagName = valClean.replace(/[<>/]/g, '').trim();
+            if (enteredTagName !== expectedTagName) {
+                return `Tag name '${enteredTagName}' is incorrect. Did you mean '${expectedTagName}'?`;
+            }
+
+            return `Syntax mistake in tag. Double check against '${expectedClean}'.`;
+        }
+
+        function checkAnswers() {
+            const inputs = document.querySelectorAll('input.code-input');
+            let correctCount = 0;
+            let total = inputs.length;
+            const hints = [];
+
+            inputs.forEach(input => {
+                const val = input.value.trim();
+                const expected = input.dataset.correct;
+                const errHint = diagnoseError(val, expected);
+
+                if (!errHint) {
+                    correctCount++;
+                    input.classList.remove('border-slate-700', 'border-rose-500', 'bg-rose-950/40');
+                    input.classList.add('border-emerald-500', 'bg-emerald-950/30', 'text-emerald-300');
+                } else {
+                    input.classList.remove('border-slate-700', 'border-emerald-500', 'bg-emerald-950/30');
+                    input.classList.add('border-rose-500', 'bg-rose-950/40', 'text-rose-300');
+                    hints.push({ slot: parseInt(input.dataset.idx) + 1, expected, hint: errHint });
+                }
+            });
+
+            const feedbackPanel = document.getElementById('feedbackPanel');
+            const feedbackMsg = document.getElementById('feedbackMessage');
+            const hintsContainer = document.getElementById('detailedSyntaxHints');
+            
+            feedbackPanel.classList.remove('hidden');
+
+            if (correctCount === total) {
+                feedbackMsg.className = "text-xs p-2.5 rounded border bg-emerald-950/80 border-emerald-500/50 text-emerald-300 flex items-center justify-between font-medium";
+                feedbackMsg.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span><strong>100% Correct!</strong> Perfect HTML bracket and slash syntax across all ${total} slots!</span>
+                    </div>
+                `;
+                hintsContainer.innerHTML = '';
+            } else {
+                feedbackMsg.className = "text-xs p-2.5 rounded border bg-amber-950/80 border-amber-500/50 text-amber-300 flex items-center justify-between font-medium";
+                feedbackMsg.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <span>Syntax Score: <strong>${correctCount} / ${total}</strong> correct. Review the specific syntax feedback below:</span>
+                    </div>
+                `;
+
+                hintsContainer.innerHTML = hints.slice(0, 5).map(h => `
+                    <div class="text-[11px] p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 flex items-start gap-2">
+                        <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 font-mono text-[10px] shrink-0">Item #${h.slot}</span>
+                        <span>${h.hint}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderPreviews() {
+            const targetIframe = document.getElementById('targetIframe');
+            const targetDoc = targetIframe.contentDocument || targetIframe.contentWindow.document;
+            targetDoc.open();
+            targetDoc.write(currentPart === 1 ? part1TargetHTML : part2TargetHTML);
+            targetDoc.close();
+
+            renderStudentPreview();
+        }
+
+        function renderStudentPreview() {
+            const studentIframe = document.getElementById('studentIframe');
+            const studentDoc = studentIframe.contentDocument || studentIframe.contentWindow.document;
+            studentDoc.open();
+            studentDoc.write(getStudentHTML());
+            studentDoc.close();
+        }
+
+        function switchPart(part) {
+            currentPart = part;
+            document.getElementById('part1Btn').className = part === 1 ? "px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow" : "px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
+            document.getElementById('part2Btn').className = part === 2 ? "px-3 py-1 rounded-md text-xs font-medium transition-all bg-blue-600 text-white shadow" : "px-3 py-1 rounded-md text-xs font-medium text-slate-400 hover:text-slate-200 transition-all";
+            
+            document.getElementById('feedbackPanel').classList.add('hidden');
+            renderEditor();
+        }
+
+        function setPreviewView(view) {
+            previewView = view;
+            const targetWin = document.getElementById('targetWindow');
+            const studentWin = document.getElementById('studentWindow');
+
+            document.getElementById('viewSplitBtn').className = view === 'split' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+            document.getElementById('viewMineBtn').className = view === 'mine' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+            document.getElementById('viewTargetBtn').className = view === 'target' ? "px-2.5 py-0.5 rounded text-slate-200 bg-slate-800 font-medium" : "px-2.5 py-0.5 rounded text-slate-400 hover:text-slate-200";
+
+            if (view === 'split') {
+                targetWin.classList.remove('hidden');
+                studentWin.classList.remove('hidden');
+            } else if (view === 'mine') {
+                targetWin.classList.add('hidden');
+                studentWin.classList.remove('hidden');
+            } else if (view === 'target') {
+                targetWin.classList.remove('hidden');
+                studentWin.classList.add('hidden');
+            }
+        }
+
+        function resetExercise() {
+            document.getElementById('feedbackPanel').classList.add('hidden');
+            renderEditor();
+        }
+
+        window.onload = function() {
+            renderEditor();
+        };
+    </script>
+</body>
+</html>
