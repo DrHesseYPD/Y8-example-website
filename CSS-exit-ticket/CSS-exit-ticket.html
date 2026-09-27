@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Property Exit Ticket</title>
+  <!-- html2canvas CDN for automated screenshots -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    header {
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.6rem;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    p.subtitle {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* Table Matching Area */
+    .match-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    .match-table th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .match-row {
+      background-color: #0f172a;
+      border-radius: 8px;
+    }
+
+    .match-row td {
+      padding: 12px 14px;
+    }
+
+    .match-row td:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      width: 22%;
+    }
+
+    .match-row td:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .property-badge {
+      display: inline-block;
+      background-color: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #38bdf8;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.95rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    select {
+      width: 100%;
+      background-color: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    }
+
+    select.correct {
+      border-color: #22c55e !important;
+      background-color: rgba(34, 197, 94, 0.1) !important;
+      color: #4ade80 !important;
+    }
+
+    select.incorrect {
+      border-color: #ef4444 !important;
+      background-color: rgba(239, 68, 68, 0.1) !important;
+      color: #f87171 !important;
+    }
+
+    /* Controls & Results */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #334155;
+    }
+
+    .btn {
+      background-color: #0284c7;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #0369a1;
+    }
+
+    .btn-secondary {
+      background-color: #334155;
+      color: #cbd5e1;
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    .score-banner {
+      display: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .score-banner.show {
+      display: block;
+    }
+
+    .score-pass {
+      background-color: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
+      color: #4ade80;
+    }
+
+    .score-try {
+      background-color: rgba(234, 179, 8, 0.15);
+      border: 1px solid #eab308;
+      color: #fde047;
+    }
+
+    .timestamp {
+      display: none;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 10px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="ticket-container">
+    <header>
+      <h1>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+        CSS Lesson Exit Ticket
+      </h1>
+      <p class="subtitle">Match each CSS property with its correct description and example value before leaving class!</p>
+    </header>
+
+    <table class="match-table">
+      <thead>
+        <tr>
+          <th>CSS Property</th>
+          <th>Description</th>
+          <th>Example Value</th>
+        </tr>
+      </thead>
+      <tbody id="ticket-body">
+        <!-- Rows dynamically built in JS -->
+      </tbody>
+    </table>
+
+    <div class="controls" id="controls-panel">
+      <div id="score-banner" class="score-banner"></div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+        <button class="btn" id="submit-btn" onclick="checkAnswersAndCapture()">Submit & Save Screenshot</button>
+      </div>
+    </div>
+    <div id="timestamp" class="timestamp"></div>
+  </div>
+
+  <script>
+    const data = [
+      {
+        property: "color",
+        correctDesc: "Sets the color of the text inside an element.",
+        validVals: ["#333333", "#ffffff"]
+      },
+      {
+        property: "background-color",
+        correctDesc: "Changes the color behind the content of an element.",
+        validVals: ["#333333", "#ffffff"]
+      },
+      {
+        property: "font-family",
+        correctDesc: "Specifies the font or typeface used for text.",
+        validVals: ["'Comic Sans MS', cursive"]
+      },
+      {
+        property: "font-size",
+        correctDesc: "Controls how big or small text appears on the page.",
+        validVals: ["14px", "20px"]
+      },
+      {
+        property: "line-height",
+        correctDesc: "Controls vertical spacing between lines of text.",
+        validVals: ["1.4"]
+      },
+      {
+        property: "margin",
+        correctDesc: "Creates space OUTSIDE around the border of an element.",
+        validVals: ["14px", "20px"]
+      }
+    ];
+
+    // Options presented in dropdowns
+    const allDescriptions = [
+      "Sets the color of the text inside an element.",
+      "Changes the color behind the content of an element.",
+      "Specifies the font or typeface used for text.",
+      "Controls how big or small text appears on the page.",
+      "Controls vertical spacing between lines of text.",
+      "Creates space OUTSIDE around the border of an element."
+    ];
+
+    const allValues = [
+      "#333333",
+      "#ffffff",
+      "'Comic Sans MS', cursive",
+      "14px",
+      "1.4",
+      "20px"
+    ];
+
+    function shuffle(array) {
+      return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    const shuffledDescriptions = shuffle(allDescriptions);
+    const shuffledValues = shuffle(allValues);
+
+    function renderTable() {
+      const tbody = document.getElementById('ticket-body');
+      tbody.innerHTML = '';
+
+      data.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'match-row';
+
+        tr.innerHTML = `
+          <td><span class="property-badge">${item.property}</span></td>
+          <td>
+            <select id="desc-${index}">
+              <option value="">-- Choose Description --</option>
+              ${shuffledDescriptions.map(desc => `<option value="${desc}">${desc}</option>`).join('')}
+            </select>
+          </td>
+          <td>
+            <select id="val-${index}">
+              <option value="">-- Choose Example Value --</option>
+              ${shuffledValues.map(val => `<option value="${val}">${val}</option>`).join('')}
+            </select>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function checkAnswersAndCapture() {
+      let correctCount = 0;
+      const totalChecks = data.length * 2; // 12 total points
+
+      data.forEach((item, index) => {
+        const descSelect = document.getElementById(`desc-${index}`);
+        const valSelect = document.getElementById(`val-${index}`);
+
+        descSelect.classList.remove('correct', 'incorrect');
+        valSelect.classList.remove('correct', 'incorrect');
+
+        // Check description
+        if (descSelect.value === item.correctDesc) {
+          descSelect.classList.add('correct');
+          correctCount++;
+        } else {
+          descSelect.classList.add('incorrect');
+        }
+
+        // Flexible Value Check
+        if (item.validVals.includes(valSelect.value)) {
+          valSelect.classList.add('correct');
+          correctCount++;
+        } else {
+          valSelect.classList.add('incorrect');
+        }
+      });
+
+      // Display score banner
+      const banner = document.getElementById('score-banner');
+      banner.classList.add('show');
+      
+      if (correctCount === totalChecks) {
+        banner.className = 'score-banner show score-pass';
+        banner.innerText = `🎉 Perfect! Score: ${correctCount}/${totalChecks}. Ticket Approved!`;
+      } else {
+        banner.className = 'score-banner show score-try';
+        banner.innerText = `Score: ${correctCount}/${totalChecks}. Review highlighted options and try again.`;
+      }
+
+      // Stamp Date and Time
+      const timeStampEl = document.getElementById('timestamp');
+      timeStampEl.innerText = `Submitted: ${new Date().toLocaleString()}`;
+      timeStampEl.style.display = 'block';
+
+      // Automatically capture screenshot
+      const container = document.getElementById('ticket-container');
+      const submitBtn = document.getElementById('submit-btn');
+      
+      submitBtn.innerText = "Capturing...";
+      submitBtn.disabled = true;
+
+      try {
+        const canvas = await html2canvas(container, { backgroundColor: '#1e293b' });
+        const image = canvas.toDataURL("image/png");
+
+        // Trigger download
+        const link = document.createElement('a');
+        link.download = `CSS-Exit-Ticket-${Date.now()}.png`;
+        link.href = image;
+        link.click();
+      } catch (err) {
+        console.error("Screenshot capture failed:", err);
+      } finally {
+        submitBtn.innerText = "Submit & Save Screenshot";
+        submitBtn.disabled = false;
+      }
+    }
+
+    function resetForm() {
+      document.querySelectorAll('select').forEach(sel => {
+        sel.value = '';
+        sel.classList.remove('correct', 'incorrect');
+      });
+      const banner = document.getElementById('score-banner');
+      banner.classList.remove('show');
+      document.getElementById('timestamp').style.display = 'none';
+    }
+
+    renderTable();
+  </script>
+
+</body>
+</html>
